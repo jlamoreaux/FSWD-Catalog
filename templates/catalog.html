@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <title>Catalog Project</title>
+  </head>
+  <body>
+    <header>
+      <h1>{{ category.name }}</h1>
+    </header>
+    <div class = 'navigation'>
+
+    </div>
+    <div class = 'main'>
+      <h2>Items:</h2>
+        {% for i in items %}
+        <img src= {{i.picture}}>
+        <a href="{{ url_for('catalogItem', category_name=category.name, item_id=i.id)}}">{{i.name}}</a>
+        <p>{{i.description}}</p>
+        <p>{{i.price}}</p>
+        {% endfor %}
+    </div>
+  </body>
+</html>

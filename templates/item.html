@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <title>Catalog Project</title>
+  </head>
+  <body>
+    <header>
+      <h1>{{ item.name }}</h1>
+    </header>
+    <div class = 'navigation'>
+      <h4>Sport:</h4>
+      {}
+    </div>
+    <div class = 'main'>
+        <img src= {{item.picture}}>
+        <p>{{item.description}}</p>
+        <p>{{item.price}}</p>
+    </div>
+  </body>
+</html>
