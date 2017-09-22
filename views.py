@@ -3,6 +3,7 @@ redis = Redis()
 
 from flask import Flask, jsonify, request, g, render_template, redirect, url_for, make_response, flash
 from flask_httpauth import HTTPBasicAuth
+from flask import session as login_session
 
 from models import Base, Item, Category
 
@@ -14,6 +15,7 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 
 import time
+import random, string
 import json
 import requests
 import httplib2
@@ -30,6 +32,15 @@ CLIENT_ID = 'tempID'#json.loads(open('client_secrets.json', 'r').read())['web'][
 
 def nav_links():
     return session.query(Category).all()
+
+
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase +
+        string.digits) for x in xrange(32))
+    login_session['state'] = state
+    return render_template('login.html', links=nav_links())
+
 
 @auth.verify_password
 def verify_password(username_or_token, password):
