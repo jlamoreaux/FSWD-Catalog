@@ -8,17 +8,23 @@
     <header>
       <h1>{{ item.name }}</h1>
     </header>
-    <div class = 'navigation'>
-      <h4>Sport:</h4>
-      {% for i in links %}
-      <a href='{{ url_for("catalog", category_name=i.name)}}'>{{i.name}}</a>
-      <br>
-      {% endfor %}
-    </div>
-    <div class = 'main'>
-        <img src= {{item.picture}}>
-        <p>{{item.description}}</p>
-        <p>{{item.price}}</p>
+    <div class = 'container'>
+      <div class = 'navigation'>
+        <h4>Sport:</h4>
+        {% for i in links %}
+        <a href='{{ url_for("catalog", category_name=i.name)}}'>{{i.name}}</a>
+        <br>
+        {% endfor %}
+      </div>
+      <div class = 'main'>
+        <div id = 'item'>
+          <img src= {{item.picture}}>
+          <p>{{item.description}}</p>
+          <p>{{item.price}}</p>
+          <br>
+          <a href="{{url_for('catalog', category_name=category.name)}}">Back to {{category.name}}</a>
+        </div>
+      </div>
     </div>
   </body>
 </html>

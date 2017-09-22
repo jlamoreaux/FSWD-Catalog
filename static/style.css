@@ -1,14 +1,18 @@
 body {
   font-family: helvetica, arial, sans-serif;
   text-align: left;
-  background-color: #0C0C0C;
-  color: white;
+  background-color: #333333;
+  color: blue;
 }
 
-.container {
-  display: flex;
-  width: 100%;
-  flex-wrap: wrap;
+header{
+    width: 100%;
+    height: 60px;
+    background-color: white;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    clear: both;
 }
 
 h1 {
@@ -33,26 +37,42 @@ p {
 }
 
 a {
+  text-decoration: none;
+  color: #ffffcc;
 
 }
 
-#catalog{
-  position: absolute;
+a:hover {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+#catalog {
+  /*position: relative;
   bottom: 0;
+  width: 50%;*/
+}
+
+#item {
+
+}
+
+.container {
   width: 100%;
+  height: 80%;
 }
 
 .navigation {
-  display: block;
   height: 100%;
-  width: 40px;
-  background-color: black;
+  width: 120px;
   color: white;
-  position: absolute;
+  float: left;
+  border-right: 15px;
+  border-color: black;
+  /*position: absolute;*/
 }
 
 .main {
-  background-color: grey;
-  position: relative;
-  background-size: cover;
+  margin-left: 135px;
+  background-color: yellow;
 }

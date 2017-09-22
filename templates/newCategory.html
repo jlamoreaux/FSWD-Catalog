@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css')}}">
+  </head>
+  <body>
+    <header>
+      <h1>Add New Category</h1>
+    </header>
+    <div class = 'container'>
+      <div class = 'navigation'>
+        <h4>Sport:</h4>
+        {% for i in links %}
+        <a href='{{ url_for("catalog", category_name=i.name)}}'>{{i.name}}</a>
+        <br>
+        {% endfor %}
+      </div>
+      <div class = 'main'>
+        <form action='#' method='POST'>
+          <input type='text' size='30' name='name' label='Name of Category' placeholder='New Category Name'>
+          <input type='submit' value='Add Category'>
+          <a href='#'>Cancel</a>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
