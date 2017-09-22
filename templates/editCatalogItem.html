@@ -20,6 +20,7 @@
           <input type='text' size='30' name='name' label='Name of Item:' value='{{item.name}}'>
           <input type='text' size='10' name='price' label='Price:' value='{{item.price}}'>
           <input type='text' size='50' name='description' label='Description:' value='{{item.description}}'>
+          <input type='text' size='50' name='img_url' label='Image URL' value='{{item.picture}}'>
           <input type='submit' value='Edit Item'>
           <a href='{{ url_for("catalog", category_name=category_name) }}'>Cancel</a>
         </form>
