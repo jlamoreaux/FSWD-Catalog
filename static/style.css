@@ -1,0 +1,58 @@
+body {
+  font-family: helvetica, arial, sans-serif;
+  text-align: left;
+  background-color: #0C0C0C;
+  color: white;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+h1 {
+  text-transform: uppercase;
+  font-weight: 100;
+}
+
+h2 {
+  font-weight: 800;
+}
+
+h3 {
+
+}
+
+h4 {
+
+}
+
+p {
+
+}
+
+a {
+
+}
+
+#catalog{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.navigation {
+  display: block;
+  height: 100%;
+  width: 40px;
+  background-color: black;
+  color: white;
+  position: absolute;
+}
+
+.main {
+  background-color: grey;
+  position: relative;
+  background-size: cover;
+}

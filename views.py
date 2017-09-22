@@ -28,6 +28,9 @@ auth = HTTPBasicAuth()
 
 CLIENT_ID = 'tempID'#json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
 
+def nav_links():
+    return session.query(Category).all()
+
 @auth.verify_password
 def verify_password(username_or_token, password):
     #Try to see if it's a token first
@@ -168,15 +171,17 @@ def catalogItemJSON(category_id, item_id):
 #@app.route('/catalog/<int:category_id>/')
 @app.route('/<category_name>')
 def catalog(category_name):
-    category = session.query(Category).filter_by(name=category_name).one()
-    items = session.query(Item).filter_by(category_id=category.id)
-    return render_template('catalog.html', category=category, items=items)
+    category = session.query(Category).filter_by(name=category_name).first()
+    items = session.query(Item).filter_by(category=category)
+    links = nav_links()
+    return render_template('catalog.html', category=category, items=items, links=links)
 
 @app.route('/<category_name>/<item_id>')
 def catalogItem(category_name, item_id):
     category = session.query(Category).filter_by(name=category_name).one()
-    item = session.query(Item).filter_by(id=item_id).one()
-    return render_template('item.html', category=category, item=item)
+    item = session.query(Item).filter_by(id=item_id).first()
+    links = nav_links()
+    return render_template('item.html', category=category, item=item, links=links)
 
 
 
