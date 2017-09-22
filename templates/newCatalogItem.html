@@ -8,21 +8,26 @@
     </header>
     <div class = 'container'>
       <div class = 'navigation'>
+        <h4>Sport:</h4>
+        {% for i in links %}
+        <a href='{{ url_for("catalog", category_name=i.name)}}'>{{i.name}}</a>
+        <br>
+        {% endfor %}
+      </div>
+      <div class = 'main'>
+        <h2>New Catalog Item</h2>
 
+        <form action="{{url_for('newCatalogItem', category_name = category.name)}}" method='POST'>
+          <input type='text' size='30' name='name' label='Name of Item:' placeholder='New Catalog Item'>
+          <input type='text' size='10' name='price' label='Price:' placeholder='$XX.XX'>
+          <input type='text' size='50' name='description' label='Description:' placeholder='Tell us about the item'>
+          <input type='text' size='50' name='img_url' label='Image URL' placeholder='Link to Image of the Item'>
+          <input type='submit' value='Create Item'>
+        </form>
+
+        <a href="{{url_for('catalog', category_name = category.name)}}">Cancel</a>
       </div>
     </div>
-    <div class = 'main'>
-      <h2>New Catalog Item</h2>
 
-      <form action="{{url_for('newCatalogItem', category_name = category.name)}}" method='POST'>
-        <input type='text' size='30' name='name' label='Name of Item:' placeholder='New Catalog Item'>
-        <input type='text' size='10' name='price' label='Price:' placeholder='$XX.XX'>
-        <input type='text' size='50' name='description' label='Description:' placeholder='Tell us about the item'>
-        <input type='text' size='50' name='img_url' label='Image URL' placeholder='Link to Image of the Item'>
-        <input type='submit' value='Create Item'>
-      </form>
-
-      <a href="{{url_for('catalog', category_name = category.name)}}">Cancel</a>
-    </div>
   </body>
 </html>
