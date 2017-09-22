@@ -162,11 +162,10 @@ def catalogItemJSON(category_id, item_id):
 @app.route('/<category_name>/catalog')
 def catalog(category_name):
     category = session.query(Category).filter_by(name=category_name).first()
-    items = session.query(Item).filter_by(category_id=category.id)
+    category_id = category.id
+    items = session.query(Item).filter_by(category_id=category_id)
     links = nav_links()
     if items:
-        print 'this is the if'
-        print 'category # ' + str(category.id)
         return render_template('catalog.html', category=category, items=items, links=links)
     else:
         print 'this is the else'
@@ -202,7 +201,7 @@ def editCategory(category_name):
         flash('Category Edited!')
         return redirect(url_for('showCategories'))
     else:
-        return render_template('editCategory.html', category_name=category_name, category=editedCategorycategory, links=nav_links())
+        return render_template('editCategory.html', category_name=category_name, category=editedCategory, links=nav_links())
 
 @app.route('/<category_name>/delete', methods=['GET', 'POST'])
 def deleteCategory(category_name):
