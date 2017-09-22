@@ -1,7 +1,7 @@
 from redis import Redis
 redis = Redis()
 
-from flask import Flask, jsonify, request, g, render_template, redirect, url_for, make_response
+from flask import Flask, jsonify, request, g, render_template, redirect, url_for, make_response, flash
 from flask_httpauth import HTTPBasicAuth
 
 from models import Base, Item, Category
@@ -28,6 +28,9 @@ auth = HTTPBasicAuth()
 
 CLIENT_ID = 'tempID'#json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
 
+def nav_links():
+    return session.query(Category).all()
+
 @auth.verify_password
 def verify_password(username_or_token, password):
     #Try to see if it's a token first
@@ -46,7 +49,7 @@ def verify_password(username_or_token, password):
 def start():
     return render_template('')
 
-@app.route('/oauth/<provider>', methods = ['POST'])
+@app.route('/oauth/<provider>', methods = ['GET', 'POST'])
 def login(provider):
     auth_code = request.json.get('auth_code')
     print "received auth code %s" % auth_code
@@ -138,20 +141,10 @@ def get_resource():
 
 @app.route('/')
 @app.route('/index')
-def index():
+def showCategories():
     category = session.query(Category).first()
     items = session.query(Item).filter_by(category_id=category.id)
-    output = ''
-    for i in items:
-        output += 'Item:'
-        output += '</br>'
-        output += i.name
-        output += '</br>'
-        output += i.price
-        output += '</br>'
-        output += i.description
-        output += '</br></br>'
-    return output
+    return render_template('index.html', category=category, links=nav_links())
 
 @app.route('/catalog/<int:category_id>/JSON', methods=['GET'])
 def catalogJSON(category_id):
@@ -165,22 +158,109 @@ def catalogItemJSON(category_id, item_id):
         id=item_id).one()
     return jsonify(Item=[item.serialize])
 
-#@app.route('/catalog/<int:category_id>/')
 @app.route('/<category_name>')
+@app.route('/<category_name>/catalog')
 def catalog(category_name):
-    category = session.query(Category).filter_by(name=category_name).one()
+    category = session.query(Category).filter_by(name=category_name).first()
     items = session.query(Item).filter_by(category_id=category.id)
-    return render_template('catalog.html', category=category, items=items)
+    links = nav_links()
+    if items:
+        print 'this is the if'
+        print 'category # ' + str(category.id)
+        return render_template('catalog.html', category=category, items=items, links=links)
+    else:
+        print 'this is the else'
+        return render_template('createCatalog.html', category_name=category_name, category=category, items=items, links=links)
 
-@app.route('/<category_name>/<item_id>')
+@app.route('/<category_name>/<int:item_id>')
 def catalogItem(category_name, item_id):
+    category = session.query(Category).filter_by(name=category_name)
+    item = session.query(Item).filter_by(id=item_id).first()
+    return render_template('item.html', category=category, item=item, links=nav_links())
+
+@app.route('/newcategory', methods = ['GET', 'POST'])
+def newCategory():
+    if request.method == 'POST':
+        newCategory = Category(name = request.form['name'])
+        newCategory.name = (newCategory.name).lower()
+        session.add(newCategory)
+        session.commit()
+        flash('New Category Added!')
+        return redirect(url_for('showCategories'))
+    else:
+        return render_template('newCategory.html', links=nav_links())
+
+@app.route('/<category_name>/edit', methods=['GET', 'POST'])
+def editCategory(category_name):
+    editedCategory = session.query(Category).filter_by(name=category_name).one()
+
+    if request.method == 'POST':
+        if request.form['name']:
+            editedCategory.name = (request.form['name']).lower()
+        session.add(editedCategory)
+        session.commit()
+        flash('Category Edited!')
+        return redirect(url_for('showCategories'))
+    else:
+        return render_template('editCategory.html', category_name=category_name, category=editedCategorycategory, links=nav_links())
+
+@app.route('/<category_name>/delete', methods=['GET', 'POST'])
+def deleteCategory(category_name):
+    categoryToDelete = session.query(Category).filter_by(name=category_name).one()
+    if request.method == 'POST':
+            session.delete(categoryToDelete)
+            session.commit()
+            flash('Category Deleted!')
+            return redirect(url_for('showCategories'))
+    else:
+        return render_template('deleteCategory.html', category=categoryToDelete, category_name=category_name, links=nav_links())
+
+
+@app.route('/<category_name>/new', methods = ['GET', 'POST'])
+def newCatalogItem(category_name):
     category = session.query(Category).filter_by(name=category_name).one()
-    item = session.query(Item).filter_by(id=item_id).one()
-    return render_template('item.html', category=category, item=item)
+    if request.method == 'POST':
+        newCatalogItem = Item(name = request.form['name'], price = request.form['price'], description = request.form['description'], category = category)
+        session.add(newCatalogItem)
+        session.commit()
+        flash('New Item Added to Catalog!')
+        return redirect(url_for('catalog', category_name = category.name))
+    else:
+        return render_template('newCatalogItem.html', category_name = category_name, category = category, links=nav_links())
+
+@app.route('/<category_name>/<int:item_id>/edit', methods = ['GET', 'POST'])
+def editCatalogItem(category_name, item_id):
+    category = session.query(Category).filter_by(name=category_name).one()
+    editedItem = session.query(Item).filter_by(id=item_id).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            editedItem.name = (request.form['name']).lower()
+            editedItem.price = request.form['price']
+            editedItem.description = request.form['description']
+        session.add(editedItem)
+        session.commit()
+        flash('Item Edited!')
+        print 'REQUEST METHOD == POST'
+        return redirect(url_for('catalog', category_name=category_name, links=nav_links()))
+    else:
+        print 'REQUEST METHOD == GET'
+        return render_template('editCatalogItem.html', category_name=category_name, category=category, item_id=item_id, item=editedItem, links=nav_links())
+
+@app.route('/<category_name>/<item_id>/delete', methods=['GET', 'POST'])
+def deleteCatalogItem(category_name, item_id):
+    category = session.query(Category).filter_by(name=category_name).one()
+    itemToDelete = session.query(Item).filter_by(id=item_id).one()
+    if request.method == 'POST':
+        session.delete(itemToDelete)
+        session.commit()
+        flash('Item Deleted!')
+        return redirect(url_for('catalog', category_name=category_name))
+    else:
+        return render_template('deleteCatalogItem.html', category_name=category_name, category=category, item_id=item_id, item=itemToDelete, links=nav_links())
 
 
 
 if __name__ == '__main__':
     app.config['SECRET_KEY'] = 'SUPERSECRETKEY' #''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8000)
