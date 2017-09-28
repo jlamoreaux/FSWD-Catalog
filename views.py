@@ -20,15 +20,18 @@ import json
 import requests
 import httplib2
 
-engine = create_engine('sqlite:///catalog.db')
+app = Flask(__name__)
 
+engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
+
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
-app = Flask(__name__)
-auth = HTTPBasicAuth()
 
-CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
+#auth = HTTPBasicAuth()
+
+CLIENT_ID = json.loads(
+    open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = 'Udacity Catalog'
 
 def nav_links():
@@ -40,25 +43,6 @@ def showLogin():
         string.digits) for x in xrange(32))
     login_session['state'] = state
     return render_template('login.html', STATE=state, CLIENT_ID=CLIENT_ID)
-
-
-@auth.verify_password
-def verify_password(username_or_token, password):
-    #Try to see if it's a token first
-    user_id = User.verify_auth_token(username_or_token)
-    if user_id:
-        user = session.query(User).filter_by(id=user_id).one()
-    else:
-        user = session.query(User).filter_by(username = username_or_token).first()
-        if not user or not user.verify_password(password):
-            return False
-    g.user = user
-    return True
-
-
-@app.route('/clientOAuth')
-def start():
-    return render_template('')
 
 @app.route('/oauth/<provider>', methods = ['GET', 'POST'])
 def login(provider):
@@ -141,45 +125,6 @@ def login(provider):
         print 'Functionality for Facebook login is still under development' # TODO: Add Facebook login
     else:
         return 'Unrecognized Provider'
-
-
-@app.route('/token')
-@auth.login_required
-def get_auth_token():
-    token = g.user.generate_auth_token()
-    return jsonify({'token': token.decode('ascii')})
-
-
-@app.route('/users', methods=['POST'])
-def new_user():
-    username = request.json.get('username')
-    password = request.json.get('password')
-    if username is None or password is None:
-        print 'missing arguments'
-        abort(400)
-
-    if session.query(User).filter_by(username=username).first() is not None:
-        print 'existing user'
-        user = sesion.query(User).filter_by(username=usernmae).first()
-        return jsonify({ 'message':'user already exists' }), 200
-
-    user = User(username = username)
-    user.hash_password(password)
-    session.add(user)
-    session.commit()
-    return jsonify({ 'username': user.username }), 201
-
-@app.route('/api/users/<int:id>')
-def get_user(id):
-    user = session.query(User).filter_by(id=id).one()
-    if not user:
-        abort(400)
-    return jsonify({ 'username': user.username})
-
-@app.route('/api/resource')
-@auth.login_required
-def get_resource():
-    return jsonify({ 'data': 'Hello, %s!' % g.user.username })
 
 
 @app.route('/')
