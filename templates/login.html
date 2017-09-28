@@ -35,96 +35,97 @@
         <div id="result">
 
         </div>
-        <script>
-          function signInCallback(authResult) {
-            //console.log(json);
-            //authResult = json;
-            if (authResult['code']) {
-              // Hides the sign-in button once the user is authorized.
-              $('#signinButton').attr('style', 'display: none');
-              // Send one-time-use code to the server. Will display if login was successful or not and redirect to main page
-              $.ajax({
-                type: 'POST',
-                url: '/oauth/google?state={{STATE}}',
-                processData: false,
-                data: authResult['code'],
-                contentType: 'application/octet-stream; charset=utf-8',
-                success: function(result) {
-                  if (result) {
-                    $('#result').html('Login Seccessful!</br>' + result + '</br>Redirecting...');
-                    setTimeout(function(){
-                      window.location.href = '/index';
-                    }, 4000);
-                  } else if (authResult['error']) {
-                      console.log('There was an error: ' + authResult['error']);
-                  } else {
-                      $('#result').html('Failed to make a server-side call. Check your configuration and console.');
-                  }
-                }
-              });
-            }
-          }
-        </script>
-        <a href='#' onclick="signOut();">Sign Out from Google</a>
-       <script>
-          var auth2;
-          gapi.load('auth2', function() {
-            auth2 = gapi.auth2.init();
-          });
 
-          function onSignIn() {
-            var profile = auth2.currentUser.get().getBasicProfile();
-            console.log('User logged in.');
-            console.log('ID:', profile.getId());
-            console.log('Name:', profile.getName());
-            console.log('Image URL:', profile.getImageUrl());
-            console.log('Email:', profile.getEmail());
-          }
-        </script>
-        <script>
-          function signOut() {
-            auth2.signOut().then(function() {
-              console.log('User signed out.');
-            });
-          }
-        </script>
-<!--FACEBOOK SIGN IN-->
-
-        <script>
-          window.fbAsyncInit = function() {
-            FB.init({
-              appId      : '122148885114790',
-              cookie     : true,
-              xfbml      : true,
-              version    : 'v2.10'
-            });
-            FB.AppEvents.logPageView();
-          };
-
-          (function(d, s, id){
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {return;}
-            js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-          }(document, 'script', 'facebook-jssdk'));
-
-          function sendTokenToServer() {
-            car access_token = FB.getAuthResponse()['accessToken'];
-            console.log(access_token)
-            console.log('Welcome! Fetching your information....');
-            FB.api('/me', function(response) {
-              console.log('Successful login for: ' + response.name);
-              $.ajax({
-                type: 'POST'
-                url: '/oauth/facebook'
-              })
-            })
-          }
-
-
-        </script>
       </div>
     </div>
+    <script>
+      function signInCallback(authResult) {
+        //console.log(json);
+        //authResult = json;
+        if (authResult['code']) {
+          // Hides the sign-in button once the user is authorized.
+          $('#signinButton').attr('style', 'display: none');
+          // Send one-time-use code to the server. Will display if login was successful or not and redirect to main page
+          $.ajax({
+            type: 'POST',
+            url: '/oauth/google?state={{STATE}}',
+            processData: false,
+            data: authResult['code'],
+            contentType: 'application/octet-stream; charset=utf-8',
+            success: function(result) {
+              if (result) {
+                $('#result').html('Login Seccessful!</br>' + result + '</br>Redirecting...');
+                setTimeout(function(){
+                  window.location.href = '/index';
+                }, 4000);
+              } else if (authResult['error']) {
+                  console.log('There was an error: ' + authResult['error']);
+              } else {
+                  $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+              }
+            }
+          });
+        }
+      }
+    </script>
+    <a href='#' onclick="signOut();">Sign Out from Google</a>
+   <script>
+      var auth2;
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init();
+      });
+
+      function onSignIn() {
+        var profile = auth2.currentUser.get().getBasicProfile();
+        console.log('User logged in.');
+        console.log('ID:', profile.getId());
+        console.log('Name:', profile.getName());
+        console.log('Image URL:', profile.getImageUrl());
+        console.log('Email:', profile.getEmail());
+      }
+    </script>
+    <script>
+      function signOut() {
+        auth2.signOut().then(function() {
+          console.log('User signed out.');
+        });
+      }
+    </script>
+<!--FACEBOOK SIGN IN-->
+
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '122148885114790',
+          cookie     : true,
+          xfbml      : true,
+          version    : 'v2.10'
+        });
+        FB.AppEvents.logPageView();
+      };
+
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+
+      function sendTokenToServer() {
+        car access_token = FB.getAuthResponse()['accessToken'];
+        console.log(access_token)
+        console.log('Welcome! Fetching your information....');
+        FB.api('/me', function(response) {
+          console.log('Successful login for: ' + response.name);
+          $.ajax({
+            type: 'POST'
+            url: '/oauth/facebook'
+          })
+        })
+      }
+
+
+    </script>
   </body>
 </html>
