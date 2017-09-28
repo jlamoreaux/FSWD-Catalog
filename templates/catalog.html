@@ -6,7 +6,7 @@
   </head>
   <body>
     <header>
-      <h1>{{ category.name }}</h1>
+      <h1>Udacity Sports Catalog</h1>
     </header>
     <div class = 'container'>
       <div class = 'navigation'>
@@ -17,13 +17,13 @@
         {% endfor %}
       </div>
       <div class = 'main'>
+        <h2>{{ category.name}}</h2>
         <div id = 'catalog'>
           <a href=""></a> <!-- Insert Add category here -->
-          <h2>Items:</h2>
+          <h3>Items:</h3>
             {% for i in items %}
             <img src= {{i.picture}}>
             <a href="{{ url_for('catalogItem', category_name=category.name, item_id=i.id)}}">{{i.name}}</a><br>
-            <p>{{i.description}}</p><br>
             <p>{{i.price}}</p><br><br>
             {% endfor %}
         </div>

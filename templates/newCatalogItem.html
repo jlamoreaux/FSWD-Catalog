@@ -4,7 +4,7 @@
   </head>
   <body>
     <header>
-      <h1>{{category.name}}</h1>
+      <h1>Udacity Sports Catalog</h1>
     </header>
     <div class = 'container'>
       <div class = 'navigation'>
@@ -15,7 +15,8 @@
         {% endfor %}
       </div>
       <div class = 'main'>
-        <h2>New Catalog Item</h2>
+        <h2>{{category.name}}</h1>
+        <h3>New Catalog Item</h2>
 
         <form action="{{url_for('newCatalogItem', category_name = category.name)}}" method='POST'>
           <input type='text' size='30' name='name' label='Name of Item:' placeholder='New Catalog Item'>

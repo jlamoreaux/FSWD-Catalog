@@ -4,8 +4,7 @@
   </head>
   <body>
     <header>
-      <h1>{{category.name}}</h1>
-      <h2>Edit {{item.name}}</h2>
+      <h1>Udacity Sports Catalog</h1>
     </header>
     <div class = 'container'>
       <div class = 'navigation'>
@@ -16,12 +15,20 @@
         {% endfor %}
       </div>
       <div class = 'main'>
+        <h1>{{category.name}}</h1>
+        <h2>Edit {{item.name}}</h2>
         <form action='{{url_for("editCatalogItem", category_name = category.name, item_id=item.id)}}' method='POST'>
+
           <input type='text' size='30' name='name' label='Name of Item:' value='{{item.name}}'>
+
           <input type='text' size='10' name='price' label='Price:' value='{{item.price}}'>
+
           <input type='text' size='50' name='description' label='Description:' value='{{item.description}}'>
+
           <input type='text' size='50' name='img_url' label='Image URL' value='{{item.picture}}'>
+
           <input type='submit' value='Edit Item'>
+
           <a href='{{ url_for("catalog", category_name=category_name) }}'>Cancel</a>
         </form>
       </div>
