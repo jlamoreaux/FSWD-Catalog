@@ -2,7 +2,7 @@
   <head>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css')}}">
     <!--PRE-REQUISITES FOR GOOGLE SIGN IN -->
-    <script scr="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="//apis.google.com/js/platform.js?onload=start">
     </script>
   </head>
@@ -68,30 +68,9 @@
         }
       }
     </script>
-    <a href='#' onclick="signOut();">Sign Out from Google</a>
-   <script>
-      var auth2;
-      gapi.load('auth2', function() {
-        auth2 = gapi.auth2.init();
-      });
+    <a href='#'>Sign Out from Google</a>
 
-      function onSignIn() {
-        var profile = auth2.currentUser.get().getBasicProfile();
-        console.log('User logged in.');
-        console.log('ID:', profile.getId());
-        console.log('Name:', profile.getName());
-        console.log('Image URL:', profile.getImageUrl());
-        console.log('Email:', profile.getEmail());
-      }
-    </script>
-    <script>
-      function signOut() {
-        auth2.signOut().then(function() {
-          console.log('User signed out.');
-        });
-      }
-    </script>
-<!--FACEBOOK SIGN IN-->
+<!--FACEBOOK SIGN IN
 
     <script>
       window.fbAsyncInit = function() {
@@ -126,6 +105,6 @@
       }
 
 
-    </script>
+    </script>-->
   </body>
 </html>

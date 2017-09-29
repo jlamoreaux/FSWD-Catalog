@@ -1,0 +1,3 @@
+Flask>=0.2
+SQLAlchemy>=0.6
+BrokenPackage>=0.7,<=1.0

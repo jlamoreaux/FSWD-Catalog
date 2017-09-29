@@ -5,7 +5,7 @@ from flask import Flask, jsonify, request, g, render_template, redirect, url_for
 from flask_httpauth import HTTPBasicAuth
 from flask import session as login_session
 
-from models import Base, Item, Category
+from models import BASE, Item, Category, User, secret_key
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, sessionmaker
@@ -21,9 +21,10 @@ import requests
 import httplib2
 
 app = Flask(__name__)
+app.config.from_pyfile('config.cfg')
 
 engine = create_engine('sqlite:///catalog.db')
-Base.metadata.bind = engine
+BASE.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -47,8 +48,6 @@ def showLogin():
 
 @app.route('/oauth/<provider>', methods = ['GET', 'POST'])
 def login(provider):
-    auth_code = request.json.get('auth_code')
-    print "received auth code %s" % auth_code
     # Google Login
     if provider == 'google':
         if request.args.get('state') != login_session['state']:
@@ -76,7 +75,7 @@ def login(provider):
         print 'Access Token : %s' % credentials.access_token
 
         gplus_id = credentials.id_token['sub']
-        if result['user_id'] != glpus_id:
+        if result['user_id'] != gplus_id:
             response = make_response(
             json.dumps("Token's user ID doesn't match given user ID."), 401)
             response.headers['Content-Type'] = 'application/json'
@@ -113,20 +112,26 @@ def login(provider):
         login_session['provider'] = 'google'
 
         # See if user exists. If not, make a new one
-        user_id = getUserID(data['email'])
-        if not user_id:
-            user_id = createUser(login_session)
-        login_session['user_id'] = user_id
+        user = getUser(data['email'])
+        if not user:
+            user = createUser(login_session)
+        login_session['user_id'] = user.id
 
         # Create and send token back to client
         token = user.generate_auth_token(600)
         return jsonify({'token': token.decode('ascii')})
-    # Facebook Login
     elif provider == 'facebook':
+        '''
+        Facebook Login
+        '''
         print 'Functionality for Facebook login is still under development' # TODO: Add Facebook login
     else:
         return 'Unrecognized Provider'
 
+@app.route('/disconnect/<provider>')
+def disconnect():
+    if provider == 'google':
+        print 'hello'
 
 @app.route('/')
 @app.route('/index')
@@ -260,28 +265,28 @@ def deleteCatalogItem(category_name, item_id):
 # Helper Functions
 
 def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session[
+    newUser = User(username=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
     session.add(newUser)
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
-    return user.id
-
-
-def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
-def getUserID(email):
+#def getUserInfo(user_id):
+#    user = session.query(User).filter_by(id=user_id).one()
+#    return user
+
+
+def getUser(email):
     try:
         user = session.query(User).filter_by(email=email).one()
-        return user.id
+        return user
     except:
         return None
 
 
 if __name__ == '__main__':
-    app.config['SECRET_KEY'] = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
-    app.debug = True
+    app.config['SECRET_KEY'] = secret_key
+    #app.debug = True
     app.run(host='0.0.0.0', port=8000)

@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Category, Item, Base
+from models import Category, Item, BASE
 
 engine = create_engine('sqlite:///catalog.db')
-Base.metadata.bind = engine
+BASE.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
