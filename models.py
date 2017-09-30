@@ -1,9 +1,10 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from passlib.apps import custom_app_context as pwd_context
 from itsdangerous import(TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 import random, string
+import datetime
 
 BASE = declarative_base()
 secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
@@ -36,6 +37,7 @@ class Item(BASE):
     picture = Column(String(250))
     description = Column(String(400))
     price = Column(String)
+    date_added = Column(DateTime)
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
 

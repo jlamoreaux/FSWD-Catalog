@@ -22,7 +22,6 @@
           <a href=""></a> <!-- Insert Add category here -->
           <h3>Items:</h3>
             {% for i in items %}
-            <img src= {{i.picture}}>
             <a href="{{ url_for('catalogItem', category_name=category.name, item_id=i.id)}}">{{i.name}}</a><br>
             <p>{{i.price}}</p><br><br>
             {% endfor %}

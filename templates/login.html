@@ -21,7 +21,7 @@
 
       <div class = 'main'>
         <!-- GOOGLE SIGN IN-->
-        <div id="signInButton">
+        <div id="signInButtonGoogle">
           <span class="g-signin"
             data-scope="openid email"
             data-clientid="{{CLIENT_ID}}"
@@ -31,6 +31,12 @@
             data-callback="signInCallback"
             data-approvalprompt="force">
           </span>
+        </div>
+        <div id="signInButtonFacebook">
+          <button>
+            <fb:login-button scope="public_profile, email" onlogin="sendTokenToServer();">
+            <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
+          </fb:login-button>
         </div>
         <div id="result">
 
@@ -70,7 +76,7 @@
     </script>
     <a href='#'>Sign Out from Google</a>
 
-<!--FACEBOOK SIGN IN
+<!--FACEBOOK SIGN IN-->
 
     <script>
       window.fbAsyncInit = function() {
@@ -78,33 +84,51 @@
           appId      : '122148885114790',
           cookie     : true,
           xfbml      : true,
-          version    : 'v2.10'
+          version    : 'v2.2'
         });
-        FB.AppEvents.logPageView();
+
       };
 
-      (function(d, s, id){
+      // Loads SDK asynchronously
+      (function(d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) {return;}
+        if (d.getElementById(id)) return;
         js = d.createElement(s); js.id = id;
         js.src = "//connect.facebook.net/en_US/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
       }(document, 'script', 'facebook-jssdk'));
 
+
       function sendTokenToServer() {
-        car access_token = FB.getAuthResponse()['accessToken'];
+        var access_token = FB.getAuthResponse()['accessToken'];
         console.log(access_token)
         console.log('Welcome! Fetching your information....');
         FB.api('/me', function(response) {
           console.log('Successful login for: ' + response.name);
           $.ajax({
-            type: 'POST'
-            url: '/oauth/facebook'
-          })
-        })
-      }
+            type: 'POST',
+            url: '/oauth/facebook?state={{STATE}}',
+            processData: false,
+            data: access_token,
+            contentType: 'application/octet-stream; charset=utf-8',
+            success: function(result) {
+              if(result) {
+                $('#result').html('Login Seccessful!</br>'+ result + '</br>Redirecting...')
+                setTimeout(function(){
+                  window.location.href = "/index";
+                }, 4000);
+
+            }else{
+              $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+            }
+          }
+        });
+      });
+    }
 
 
-    </script>-->
+    </script>
+
+
   </body>
 </html>
