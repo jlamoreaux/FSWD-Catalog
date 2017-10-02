@@ -7,14 +7,14 @@ from flask import session as login_session
 
 from models import BASE, Item, Category, User, secret_key
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, DateTime
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 
-import time
+import time, datetime
 import random, string
 import json
 import requests
@@ -237,7 +237,9 @@ def disconnect(provider):
 @app.route('/index')
 def showCategories():
     category = session.query(Category).first()
-    items = session.query(Item).all() #.order_by(date_added)
+    items = session.query(Item).order_by('date_added').all()
+    for i in items:
+        print i.date_added
     return render_template('index.html', category=category, items=items, links=nav_links())
 
 @app.route('/catalog/<int:category_id>/JSON', methods=['GET'])
