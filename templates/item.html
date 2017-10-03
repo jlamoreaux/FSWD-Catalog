@@ -23,6 +23,10 @@
           <img src= {{item.picture}}>
           <p>{{item.description}}</p>
           <p>{{item.price}}</p>
+          {% if 'username' in session %}
+            <a href="{{url_for('editCatalogItem', category_name=category.name, item_id=item.id)}}">Edit</a>
+            <a href="{{url_for('deleteCatalogItem', category_name=category.name, item_id=item.id)}}">Delete</a>
+          {% endif %}
           <br>
           <a href="{{url_for('catalog', category_name=category.name)}}">Back to {{category.name}}</a>
         </div>

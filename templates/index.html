@@ -7,6 +7,18 @@
   <body>
     <header>
       <h1>Udacity Sports Catalog</h1>
+      <div id='greeting'>
+        {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+        <a href='/log'>{{login_button}}</a>
+      </div>
     </header>
     <div class = 'container'>
       <div class = 'navigation'>

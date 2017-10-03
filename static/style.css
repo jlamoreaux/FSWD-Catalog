@@ -24,7 +24,8 @@ h1, h2 {
 
 h1 {
   color: #FFF1D0;
-  font-weight: 600;
+  font-weight: 200;
+  padding-bottom: 5px;
 }
 
 
@@ -66,6 +67,10 @@ a:hover {
 
 #item {
 
+}
+
+#greeting {
+  text-align: right;
 }
 
 .container {

@@ -34,6 +34,8 @@ session = DBSession()
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = 'Udacity Catalog'
+login_button = '0'
+greeting = '0'
 
 def nav_links():
     return session.query(Category).all()
@@ -77,7 +79,6 @@ def login(provider):
         if result.get('error') is not None:
             response = make_response(json.dumps(result.get('error')), 500)
             response.headers['Content-Type'] = 'application/json'
-        print "Access Token : %s" % credentials.access_token
 
         gplus_id = credentials.id_token['sub']
         if result['user_id'] != gplus_id:
@@ -178,13 +179,9 @@ def login(provider):
         output += '<img src="'
         output += login_session['picture']
         output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-        flash("you are now logged in as %s" % login_session['username'])
+        flash("Hello %s!" % login_session['username'])
         print "done!"
         return output
-
-
-
-        print 'Functionality for Facebook login is still under development' # TODO: Add Facebook login
     else:
         return 'Unrecognized Provider'
 
@@ -216,13 +213,14 @@ def disconnect(provider):
             del login_session['email']
             del login_session['picture']
             del login_session['provider']
-            response = make_response(json.dumps('Successfully disconnected.'), 200)
-            response.headers['Content-Type'] = 'application/json'
-            return response
+            #response = make_response(json.dumps('Successfully disconnected.'), 200)
+            #response.headers['Content-Type'] = 'application/json'
+            flash('Successfully disconnected')
+            return redirect('/index')#, greeting
         else:
             response = make_response(json.dumps('Failed to revoke token for given user.'), 400)
             response.headers['Content-Type'] = 'application/json'
-            return response
+
     elif provider == 'facebook':
         # Facebook Logout
         facebook_id = login_session['facebook_id']
@@ -230,7 +228,27 @@ def disconnect(provider):
         url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
         h = httplib2.Http()
         result = h.request(url, 'DELETE')[1]
-        return 'you have been logged out'
+        del login_session['access_token']
+        del login_session['facebook_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['provider']
+        #response = make_response(json.dumps('Successfully disconnected.'), 200)
+        #response.headers['Content-Type'] = 'application/json'
+        flash('Successfully disconnected')
+        return redirect('/')
+
+@app.route('/log')
+def connectionRedirect():
+    if 'username' not in login_session:
+        return redirect('/login')
+    elif login_session['provider'] == 'facebook':
+        return redirect('/disconnect/facebook')
+    elif login_session['provider'] == 'google':
+        return redirect('/disconnect/google')
+    else:
+        return 'Unrecognized provider'
 
 
 @app.route('/')
@@ -238,9 +256,11 @@ def disconnect(provider):
 def showCategories():
     category = session.query(Category).first()
     items = session.query(Item).order_by('date_added').all()
+    greeting, login_button = loggedInOrOut()
     for i in items:
         print i.date_added
-    return render_template('index.html', category=category, items=items, links=nav_links())
+    return render_template('index.html', login_button=login_button, greeting=greeting,
+        category=category, items=items, links=nav_links())
 
 @app.route('/catalog/<int:category_id>/JSON', methods=['GET'])
 def catalogJSON(category_id):
@@ -376,6 +396,16 @@ def deleteCatalogItem(category_name, item_id):
         return render_template('deleteCatalogItem.html', category_name=category_name, category=category, item_id=item_id, item=itemToDelete, links=nav_links())
 
 # Helper Functions
+def loggedInOrOut():
+    if 'username' in login_session:
+        greeting = 'Hi ' + User.username + '!'
+        login_button = 'Logout'
+    else:
+        greeting = ' '
+        login_button = 'Login'
+    print 'logInOrOut function complete'
+    return greeting, login_button
+
 
 def createUser(login_session):
     newUser = User(username=login_session['username'], email=login_session[
