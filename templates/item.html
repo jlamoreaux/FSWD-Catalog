@@ -24,7 +24,7 @@
           <p>{{item.description}}</p>
           <p>{{item.price}}</p>
           {% if 'username' in session %}
-            <a href="{{url_for('editCatalogItem', category_name=category.name, item_id=item.id)}}">Edit</a>
+            <a href="{{url_for('editCatalogItem', category_name=category_name, item_id=item.id)}}">Edit</a>
             <a href="{{url_for('deleteCatalogItem', category_name=category.name, item_id=item.id)}}">Delete</a>
           {% endif %}
           <br>

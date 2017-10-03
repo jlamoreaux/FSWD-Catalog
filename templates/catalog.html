@@ -19,7 +19,9 @@
       <div class = 'main'>
         <h2>{{ category.name}}</h2>
         <div id = 'catalog'>
-          <a href=""></a> <!-- Insert Add category here -->
+          {% if 'username' in session %}
+            <a href="{{ url_for('newCatalogItem', category_name=category.name)}}">Add Item</a>
+          {% endif %}
           <h3>Items:</h3>
             {% for i in items %}
             <a href="{{ url_for('catalogItem', category_name=category.name, item_id=i.id)}}">{{i.name}}</a><br>
