@@ -1,4 +1,4 @@
-<html>
+<!--<html>
 <head>
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css')}}">
 </head>
@@ -14,12 +14,15 @@
       <br>
       {% endfor %}
     </div>
-    <div class = 'main'>
+    <div class = 'main'>-->
+    {% extends "template.html" %}
+    {% block content %}
       <p>
         There are currently no items in this category.</br></br>
         <a href="{{ url_for('newCatalogItem', category_name = category.name)}}">Click here</a> to create a menu item for it.
       </p>
     </div>
   </div>
-</body>
-</html>
+  {% endblock %}
+<!--</body>
+</html>-->

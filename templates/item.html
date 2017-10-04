@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!---<!DOCTYPE html>
 <html>
   <head>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
@@ -17,20 +17,24 @@
         <br>
         {% endfor %}
       </div>
-      <div class = 'main'>
+      <div class = 'main'>-->
+      {% extends "template.html" %}
+      {% block content %}
         <h2>{{ item.name }}</h2>
         <div id = 'item'>
-          <img src= {{item.picture}}>
+          <p>{{category.name}}</p>
+          <img src={{item.picture}} style="width:192px; height:128px;">
           <p>{{item.description}}</p>
           <p>{{item.price}}</p>
           {% if 'username' in session %}
-            <a href="{{url_for('editCatalogItem', category_name=category_name, item_id=item.id)}}">Edit</a>
-            <a href="{{url_for('deleteCatalogItem', category_name=category.name, item_id=item.id)}}">Delete</a>
+            <a href="{{ url_for('editCatalogItem', category_name=category.name, item_id=item.id) }}">Edit</a>
+            <a href="{{ url_for('deleteCatalogItem', category_name=category.name, item_id=item.id) }}">Delete</a>
           {% endif %}
           <br>
-          <a href="{{url_for('catalog', category_name=category.name)}}">Back to {{category.name}}</a>
+          <a href="{{ url_for('catalog', category_name=category_name) }}">Back to {{category.name}}</a>
         </div>
-      </div>
+      {% endblock %}
+      <!--</div>
     </div>
   </body>
 </html>

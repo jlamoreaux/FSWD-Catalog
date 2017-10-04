@@ -34,8 +34,14 @@ session = DBSession()
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = 'Udacity Catalog'
-login_button = '0'
+login_button = []
 greeting = '0'
+
+@app.before_request
+def pass_to_template():
+    g.greeting, g.login_button = loggedInOrOut()
+    g.links = nav_links()
+    print 'pass_to_template complete'
 
 def nav_links():
     return session.query(Category).all()
@@ -45,8 +51,8 @@ def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase +
         string.digits) for x in xrange(32))
     login_session['state'] = state
-    links = nav_links()
-    return render_template('login.html', links=links, STATE=state, CLIENT_ID=CLIENT_ID)
+    #links = nav_links()
+    return render_template('login.html', STATE=state, CLIENT_ID=CLIENT_ID)
 
 @app.route('/oauth/<provider>', methods = ['GET', 'POST'])
 def login(provider):
@@ -256,11 +262,12 @@ def connectionRedirect():
 def showCategories():
     category = session.query(Category).first()
     items = session.query(Item).order_by('date_added').all()
-    greeting, login_button = loggedInOrOut()
+    #greeting, login_button = loggedInOrOut()
+    if g.links:
+        print g.links
     for i in items:
         print i.date_added
-    return render_template('index.html', login_button=login_button, greeting=greeting,
-        category=category, items=items, links=nav_links())
+    return render_template('index.html', category=category, items=items)
 
 @app.route('/catalog/<int:category_id>/JSON', methods=['GET'])
 def catalogJSON(category_id):
@@ -283,12 +290,12 @@ def catalog(category_name):
     else:
         return 'Not a valid category'
         print 'No category found'
-    links = nav_links()
+    #links = nav_links()
     if items:
-        return render_template('catalog.html', category=category, items=items, links=links)
+        return render_template('catalog.html', category=category, items=items)
     else:
         print 'this is the else'
-        return render_template('createCatalog.html', category_name=category_name, category=category, items=items, links=links)
+        return render_template('createCatalog.html', category_name=category_name, category=category, items=items)
 
 @app.route('/<category_name>/<int:item_id>')
 def catalogItem(category_name, item_id):
@@ -297,7 +304,7 @@ def catalogItem(category_name, item_id):
         item = session.query(Item).filter_by(id=item_id).first()
     else:
         return 'not a valid category'
-    return render_template('item.html', category=category, item=item, links=nav_links())
+    return render_template('item.html', category=category, item=item)
 
 @app.route('/newcategory', methods = ['GET', 'POST'])
 def newCategory():
@@ -311,13 +318,13 @@ def newCategory():
         flash('New Category Added!')
         return redirect(url_for('showCategories'))
     else:
-        return render_template('newCategory.html', links=nav_links())
+        return render_template('newCategory.html')
 
 @app.route('/<category_name>/edit', methods=['GET', 'POST'])
 def editCategory(category_name):
     if 'username' not in login_session:
         return redirect('/login')
-    editedCategory = session.query(Category).filter_by(name=category_name).one()
+    editedCategory = session.query(Category).filter_by(name=category_name).first()
     if request.method == 'POST':
         if request.form['name']:
             editedCategory.name = (request.form['name']).lower()
@@ -326,20 +333,20 @@ def editCategory(category_name):
         flash('Category Edited!')
         return redirect(url_for('showCategories'))
     else:
-        return render_template('editCategory.html', category_name=category_name, category=editedCategory, links=nav_links())
+        return render_template('editCategory.html', category_name=category_name, category=editedCategory)
 
 @app.route('/<category_name>/delete', methods=['GET', 'POST'])
 def deleteCategory(category_name):
     if 'username' not in login_session:
         return redirect('/login')
-    categoryToDelete = session.query(Category).filter_by(name=category_name).one()
+    categoryToDelete = session.query(Category).filter_by(name=category_name).first()
     if request.method == 'POST':
             session.delete(categoryToDelete)
             session.commit()
             flash('Category Deleted!')
             return redirect(url_for('showCategories'))
     else:
-        return render_template('deleteCategory.html', category=categoryToDelete, category_name=category_name, links=nav_links())
+        return render_template('deleteCategory.html', category=categoryToDelete, category_name=category_name)
 
 
 @app.route('/<category_name>/new', methods = ['GET', 'POST'])
@@ -354,7 +361,7 @@ def newCatalogItem(category_name):
         flash('New Item Added to Catalog!')
         return redirect(url_for('catalog', category_name = category.name))
     else:
-        return render_template('newCatalogItem.html', category_name = category_name, category = category, links=nav_links())
+        return render_template('newCatalogItem.html', category_name = category_name, category = category)
 
 @app.route('/<category_name>/<int:item_id>/edit', methods = ['GET', 'POST'])
 def editCatalogItem(category_name, item_id):
@@ -362,7 +369,6 @@ def editCatalogItem(category_name, item_id):
         return redirect('/login')
     editedItem = session.query(Item).filter_by(id=item_id).one()
     category = session.query(Category).filter_by(name=category_name).one()
-    links=nav_links()
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = (request.form['name']).lower()
@@ -376,10 +382,10 @@ def editCatalogItem(category_name, item_id):
         session.commit()
         flash('Item Edited!')
         print 'REQUEST METHOD == POST'
-        return redirect(url_for('catalog', category_name=category_name, links=links))
+        return redirect(url_for('catalog', category_name=category_name))
     else:
         print 'REQUEST METHOD == GET'
-        return render_template('editCatalogItem.html', category_name=category_name, category=category, item_id=item_id, item=editedItem, links=links)
+        return render_template('editCatalogItem.html', category_name=category_name, category=category, item_id=item_id, item=editedItem)
 
 @app.route('/<category_name>/<item_id>/delete', methods=['GET', 'POST'])
 def deleteCatalogItem(category_name, item_id):
@@ -393,7 +399,7 @@ def deleteCatalogItem(category_name, item_id):
         flash('Item Deleted!')
         return redirect(url_for('catalog', category_name=category_name))
     else:
-        return render_template('deleteCatalogItem.html', category_name=category_name, category=category, item_id=item_id, item=itemToDelete, links=nav_links())
+        return render_template('deleteCatalogItem.html', category_name=category_name, category=category, item_id=item_id, item=itemToDelete)
 
 # Helper Functions
 def loggedInOrOut():

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html>
   <head>
     <title>Catalog Project</title>
@@ -28,13 +28,16 @@
         <br>
         {% endfor %}
       </div>
-      <div class = 'main'>
+      <div class = 'main'>-->
+      {% extends "template.html" %}
+      {% block content %}
         <h4>Recently Added Items:</h4>
         {% for i in items %}
         <a href='{{ url_for("catalogItem", category_name=i.category['name'], item_id=i.id)}}'>{{i.name}}</a>
         <br>
         {% endfor %}
-      </div>
+      {% endblock %}
+      <!--</div>
     </div>
   </body>
 </html>

@@ -1,4 +1,4 @@
-<html>
+<!--<html>
   <head>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css')}}">
   </head>
@@ -14,7 +14,9 @@
         <br>
         {% endfor %}
       </div>
-      <div class = 'main'>
+      <div class = 'main'>-->
+      {% extends "template.html" %}
+      {% block content %}
         <h2>Add New Category</h1>
         <form action='#' method='POST'>
           <input type='text' size='30' name='name' label='Name of Category' placeholder='New Category Name'>
@@ -22,6 +24,7 @@
           <a href='#'>Cancel</a>
         </form>
       </div>
-    </div>
+      {% endblock %}
+    <!--</div>
   </body>
-</html>
+</html>-->

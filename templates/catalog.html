@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!---<!DOCTYPE html>
 <html>
   <head>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
@@ -16,8 +16,10 @@
         <br>
         {% endfor %}
       </div>
-      <div class = 'main'>
-        <h2>{{ category.name}}</h2>
+      <div class = 'main'>-->
+      {% extends "template.html" %}
+      {% block content %}
+        <h2>{{ category.name }}</h2>
         <div id = 'catalog'>
           {% if 'username' in session %}
             <a href="{{ url_for('newCatalogItem', category_name=category.name)}}">Add Item</a>
@@ -28,7 +30,8 @@
             <p>{{i.price}}</p><br><br>
             {% endfor %}
         </div>
-      </div>
+      {% endblock %}
+      <!--</div>
     </div>
   </body>
 </html>
