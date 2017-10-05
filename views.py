@@ -284,6 +284,12 @@ def showCategories():
     return render_template('index.html', category=category, items=items)
 
 
+@app.route('/catalog/JSON', methods=['GET'])
+def categoriesJSON():
+    """Returns a JSON object containing all categories"""
+    categories = session.query(Category).all()
+    return jsonify(Categories=[i.serialize for i in categories])
+
 @app.route('/catalog/<category_name>/JSON', methods=['GET'])
 def catalogJSON(category_name):
     """Returns a JSON object containing all items in the category"""
