@@ -428,7 +428,7 @@ def editCatalogItem(category_name, item_id):
     category = session.query(Category).filter_by(name=category_name).one()
     if request.method == 'POST':
         if request.form['name']:
-            editedItem.name = (request.form['name']).lower()
+            editedItem.name = (request.form['name'])
         if request.form['price']:
             editedItem.price = request.form['price']
         if request.form['description']:
