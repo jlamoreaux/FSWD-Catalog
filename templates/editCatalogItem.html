@@ -21,13 +21,13 @@
         <h3>Edit {{item.name}}</h3>
         <form action='{{url_for("editCatalogItem", category_name = category.name, item_id=item.id)}}' method='POST'>
 
-          <input type='text' size='30' name='name' label='Name of Item:' value='{{item.name}}'>
+          <p>Name of Item: <input type='text' size='30' name='name' label='Name of Item:' value='{{item.name}}'>
 
-          <input type='text' size='10' name='price' label='Price:' value='{{item.price}}'><br>
+            Price: <input type='text' size='10' name='price' label='Price:' value='{{item.price}}'><br>
 
-          <input type='text' size='50' name='description' label='Description:' value='{{item.description}}'><br>
+          Item Description: <input type='text' size='50' name='description' label='Description:' value='{{item.description}}'><br>
 
-          <input type='text' size='50' name='img_url' label='Image URL' value='{{item.picture}}'><br>
+          Image URL: <input type='text' size='50' name='img_url' label='Image URL' value='{{item.picture}}'><br>
 
           <input type='submit' value='Edit Item'>
 
