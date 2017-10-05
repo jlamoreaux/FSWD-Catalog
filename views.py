@@ -5,7 +5,7 @@ from flask import session as login_session
 
 from models import BASE, Item, Category, User, secret_key
 
-from sqlalchemy import create_engine, DateTime
+from sqlalchemy import create_engine, DateTime, desc
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -276,7 +276,7 @@ def connectionRedirect():
 def showCategories():
     """Routes to homepage"""
     category = session.query(Category).first()
-    items = session.query(Item).order_by('date_added').all()
+    items = session.query(Item).order_by(desc('date_added')).limit(10)
     if g.links:
         print g.links
     for i in items:
