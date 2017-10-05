@@ -1,25 +1,27 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, DateTime
+import random
+import string
+import datetime
+from sqlalchemy import(
+    Column, ForeignKey, Integer, String, create_engine, DateTime)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from passlib.apps import custom_app_context as pwd_context
-from itsdangerous import(TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
-import random, string
-import datetime
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
 
 BASE = declarative_base()
-secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+secret_key = ''.join(
+    random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+
 
 class Category(BASE):
-    """
-    Defines 'Category' Table
-    """
+    """Defines 'Category' Table"""
     __tablename__ = 'category'
     name = Column(String(80), nullable=False)
     id = Column(Integer, primary_key=True)
 
     @property
     def serialize(self):
-        '''Returns data in easily serializable format'''
+        """Returns data in easily serializable format"""
         return {
             'name': self.name,
             'id':   self.id,
@@ -27,9 +29,7 @@ class Category(BASE):
 
 
 class Item(BASE):
-    """
-    Defines 'Item' Table
-    """
+    """Defines 'Item' Table"""
     __tablename__ = 'item'
 
     id = Column(Integer, primary_key=True)
@@ -43,7 +43,7 @@ class Item(BASE):
 
     @property
     def serialize(self):
-        '''Returns object in an easily serializable format'''
+        """Returns object in an easily serializable format"""
         return {
             'name':         self.name,
             'id':           self.id,
@@ -52,10 +52,9 @@ class Item(BASE):
             'description':  self.description,
         }
 
+
 class User(BASE):
-    """
-    Defines 'User' Table
-    """
+    """Defines 'User' Table"""
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     username = Column(String(32), index=True)
@@ -63,32 +62,10 @@ class User(BASE):
     email = Column(String)
     password_hash = Column(String(64))
 
-    #def hash_password(self, password):
-    #    self.password_hash = pwd_context.encrypt(password)
-
-    #def verify_password(self, password):
-    #    return pwd_context.verify(password, self.password_hash)
-
     def generate_auth_token(self, expiration=600):
-        """
-        Creates token to send to client
-        """
+        """Creates token to send to client"""
         s = Serializer(secret_key, expires_in=expiration)
         return s.dumps({'id': self.id})
-
-    #@staticmethod
-    #def verify_auth_token(token):
-    #    s = Serializer(secret_key)
-    #    try:
-    #        data = s.loads(token)
-    #    except SignatureExpired:
-            # Valid Token, but expired
-    #        return None
-    #    except BadSignature:
-            # Invalid Token
-    #        return None
-    #    user_id = data['id']
-    #    return user_id
 
 ENGINE = create_engine('sqlite:///catalog.db')
 
