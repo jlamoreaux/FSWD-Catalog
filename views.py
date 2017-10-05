@@ -269,14 +269,15 @@ def showCategories():
         print i.date_added
     return render_template('index.html', category=category, items=items)
 
-@app.route('/catalog/<int:category_id>/JSON', methods=['GET'])
-def catalogJSON(category_id):
-    items = session.query(Item).filter_by(category_id=category_id).all()
+@app.route('/catalog/<category_name>/JSON', methods=['GET'])
+def catalogJSON(category_name):
+    category = session.query(Category).filter_by(name=category_name).first()
+    items = session.query(Item).filter_by(category_id=category.id).all()
     return jsonify(Items=[i.serialize for i in items])
 
-@app.route('/catalog/<int:category_id>/item/<int:item_id>/JSON', methods=['GET'])
-def catalogItemJSON(category_id, item_id):
-    category = session.query(Category).filter_by(id=category_id).one()
+@app.route('/catalog/<category_name>/<int:item_id>/JSON', methods=['GET'])
+def catalogItemJSON(category_name, item_id):
+    category = session.query(Category).filter_by(name=category_name).one()
     item = session.query(Item).filter_by(
         id=item_id).one()
     return jsonify(Item=[item.serialize])
