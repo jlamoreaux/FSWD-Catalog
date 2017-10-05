@@ -9,7 +9,7 @@ Sports Product Catalog is a website which was built using Flask framework in Pyt
 - OAuth2Client 4.1.2
 
 ## Setup
-The file [catalog.zip](#) can be found in this repository. To initialize the database, open the shell and navigate to the folder which contains _catalog.zip_ and run the following commands:<br>
+The file [catalog.zip](https://github.com/jlamoreaux/FSWD-Catalog/raw/master/catalog.zip) can be found in this repository. To initialize the database, open the shell and navigate to the folder which contains _catalog.zip_ and run the following commands:<br>
 
 `unzip catalog.zip` _This unzips the folder containing all needed files_<br>
 `python itemSetup.py` _This initializes the database and populates the tables with the contents of the catalog_
