@@ -8,6 +8,7 @@
   <body>
     <header>
       <div id='greeting'>
+        <a href='/log'>{{g.login_button}}</a>
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             <ul>
@@ -17,7 +18,6 @@
             </ul>
           {% endif %}
         {% endwith %}
-        <a href='/log'>{{g.login_button}}</a>
       </div>
       <h1>Udacity Sports Catalog</h1>
     </header>
@@ -30,6 +30,11 @@
         <a href='{{ url_for("catalog", category_name=i.name)}}'>{{i.name}}</a>
         <br>
         {% endfor %}
+        <div id = 'newCategory'>
+          {% if 'username' in session %}
+            <a href='{{ url_for("newCategory")}}'>New Category</a>
+          {% endif %}
+        </div>
       </div>
       <div class = 'main'>
         {% block content %}
