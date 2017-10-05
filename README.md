@@ -21,6 +21,7 @@ The server will begin to run locally. You may now open a web browser and enter `
 
 ## API
 API requests will return JSON objects from the following urls:
+`localhost:8000/catalog/JSON` _This returns all the categories in the catalog._
 `localhost:8000/catalog/<category_name>/JSON` _This returns all items in a catalog._
 `localhost:8000/catalog/<category_name/<item_id>/JSON` _This returns the data for a specific item._
 

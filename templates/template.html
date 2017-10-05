@@ -7,7 +7,6 @@
   </head>
   <body>
     <header>
-      <h1>Udacity Sports Catalog</h1>
       <div id='greeting'>
         {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -20,10 +19,13 @@
         {% endwith %}
         <a href='/log'>{{g.login_button}}</a>
       </div>
+      <h1>Udacity Sports Catalog</h1>
     </header>
     <div class = 'container'>
       <div class = 'navigation'>
-        <h4>Sport:</h4>
+        <div id = 'label'>
+          <p>Sport:</p>
+        </div>
         {% for i in g.links %}
         <a href='{{ url_for("catalog", category_name=i.name)}}'>{{i.name}}</a>
         <br>

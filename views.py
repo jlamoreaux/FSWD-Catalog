@@ -189,9 +189,9 @@ def login(provider):
 
         # Successful login will prompt a greeting
         output = ''
-        output += '<h1>Welcome, '
+        output += '<h3>Welcome, '
         output += login_session['username']
-        output += '!</h1>'
+        output += '!</h3>'
         output += '<img src="'
         output += login_session['picture']
         output += ''' " style = "width: 150px; height: 150px;border-radius:
