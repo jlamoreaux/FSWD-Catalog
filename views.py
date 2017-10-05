@@ -299,7 +299,7 @@ def catalog(category_name):
 
 @app.route('/<category_name>/<int:item_id>')
 def catalogItem(category_name, item_id):
-    category = session.query(Category).filter_by(name=category_name)
+    category = session.query(Category).filter_by(name=category_name).one()
     if category:
         item = session.query(Item).filter_by(id=item_id).first()
     else:
