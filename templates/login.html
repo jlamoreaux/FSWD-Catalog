@@ -36,10 +36,11 @@
           </span>
         </div>
         <div id="signInButtonFacebook">
-          <button>
+          <span>
             <fb:login-button scope="public_profile, email" onlogin="sendTokenToServer();">
-            <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
-          </fb:login-button>
+              <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
+            </fb:login-button>
+          </span>
         </div>
         <div id="result">
 
@@ -63,7 +64,7 @@
             contentType: 'application/octet-stream; charset=utf-8',
             success: function(result) {
               if (result) {
-                $('#result').html('</br>Login Successful!</br>' + result + '</br>Redirecting...');
+                $('#result').html('</br>Login Successful!</br>' + '</br>Redirecting...');
                 setTimeout(function(){
                   window.location.href = '/index';
                 }, 4000);

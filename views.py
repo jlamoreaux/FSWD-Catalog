@@ -62,7 +62,6 @@ def login(provider):
 
     if provider == 'google':
         #Google Login
-
         if request.args.get('state') != login_session['state']:
             response = make_response(json.dumps('Invalid state parameter.'),
                                      401)
