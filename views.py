@@ -127,7 +127,7 @@ def login(provider):
         login_session['picture'] = data['picture']
         login_session['email'] = data['email']
         login_session['provider'] = 'google'
-
+        flash("Hello %s!" % login_session['username'])
         # See if user exists. If not, make a new one
         user = getUser(data['email'])
         if not user:
