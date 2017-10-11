@@ -7,8 +7,11 @@
   </head>
   <body>
     <header>
-      <div id='greeting'>
+      <div id='login_button'>
         <a href='/log'>{{g.login_button}}</a>
+      </div>
+        <h1><a id='title' href='/'>Udacity Sports Catalog</a></h1>
+      <div id='greeting'>
         {% with messages = get_flashed_messages() %}
           {% if messages %}
               {% for message in messages %}
@@ -17,7 +20,6 @@
           {% endif %}
         {% endwith %}
       </div>
-      <h1>Udacity Sports Catalog</h1>
     </header>
     <div class = 'container'>
       <div class = 'navigation'>

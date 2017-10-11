@@ -13,11 +13,28 @@ secret_key = ''.join(
     random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
 
 
+class User(BASE):
+    """Defines 'User' Table"""
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    username = Column(String(32), index=True)
+    picture = Column(String)
+    email = Column(String)
+
+    def generate_auth_token(self, expiration=600):
+        """Creates token to send to client"""
+        s = Serializer(secret_key, expires_in=expiration)
+        return s.dumps({'id': self.id})
+
+
 class Category(BASE):
     """Defines 'Category' Table"""
     __tablename__ = 'category'
     name = Column(String(80), nullable=False)
     id = Column(Integer, primary_key=True)
+    creator_id = Column(Integer, ForeignKey('user.id'))
+    creator = relationship(User)
+
 
     @property
     def serialize(self):
@@ -40,6 +57,8 @@ class Item(BASE):
     date_added = Column(DateTime)
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
+    creator_id = Column(Integer, ForeignKey('user.id'))
+    creator = relationship(User)
 
     @property
     def serialize(self):
@@ -52,20 +71,6 @@ class Item(BASE):
             'description':  self.description,
         }
 
-
-class User(BASE):
-    """Defines 'User' Table"""
-    __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    username = Column(String(32), index=True)
-    picture = Column(String)
-    email = Column(String)
-    password_hash = Column(String(64))
-
-    def generate_auth_token(self, expiration=600):
-        """Creates token to send to client"""
-        s = Serializer(secret_key, expires_in=expiration)
-        return s.dumps({'id': self.id})
 
 ENGINE = create_engine('sqlite:///catalog.db')
 
